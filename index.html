@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinMind AI – Smart Expense & Money Manager</title>
+  <meta name="description" content="AI-powered personal expense management: track income, control budgets, reach goals." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ CINEMATIC INTRO ============ -->
+  <div id="splash">
+    <div class="splash-orbs"><span></span><span></span><span></span></div>
+    <div class="splash-content">
+      <div class="splash-logo">
+        <svg viewBox="0 0 100 100" width="90" height="90">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7c5cff" /><stop offset="100%" stop-color="#22d3ee" />
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="44" fill="none" stroke="url(#g1)" stroke-width="5" class="ring" />
+          <path d="M28 62 L42 46 L54 56 L72 34" fill="none" stroke="url(#g1)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="spark" />
+          <circle cx="72" cy="34" r="5" fill="#22d3ee" class="dot" />
+        </svg>
+      </div>
+      <h1 class="splash-title">FinMind <span>AI</span></h1>
+      <p class="splash-tag" id="splashTag">Your personal AI money manager</p>
+      <div class="splash-bar"><div id="splashFill"></div></div>
+      <button class="btn primary splash-skip" id="skipIntro">Enter Dashboard →</button>
+    </div>
+  </div>
+
+  <!-- ============ APP ============ -->
+  <div class="bg-orbs"><span></span><span></span><span></span></div>
+
+  <div class="app" id="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">◈</div>
+        <div><b>FinMind</b> <span class="grad">AI</span><small>Smart money manager</small></div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button class="nav-btn active" data-view="dashboard"><i>📊</i><span>Dashboard</span></button>
+        <button class="nav-btn" data-view="transactions"><i>💳</i><span>Transactions</span></button>
+        <button class="nav-btn" data-view="budgets"><i>🎯</i><span>Budgets</span></button>
+        <button class="nav-btn" data-view="goals"><i>🏆</i><span>Goals</span></button>
+        <button class="nav-btn" data-view="insights"><i>✨</i><span>AI Insights</span></button>
+        <button class="nav-btn" data-view="assistant"><i>🤖</i><span>AI Assistant</span></button>
+        <button class="nav-btn" data-view="settings"><i>⚙️</i><span>Settings</span></button>
+      </nav>
+
+      <div class="side-card">
+        <div class="mini-label">Financial Health</div>
+        <div class="health-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" class="hr-bg" />
+            <circle cx="60" cy="60" r="50" class="hr-fg" id="sideRing" />
+          </svg>
+          <div class="hr-num" id="sideScore">0</div>
+        </div>
+        <div class="mini-text" id="sideScoreText">Calculating…</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h2 id="greeting">Hello 👋</h2>
+          <p id="subGreeting">Here's what's happening with your money.</p>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+          <button class="btn ghost" id="authBtn" type="button">Login</button>
+          <button class="btn ghost" id="addIncomeTop">＋ Income</button>
+          <button class="btn primary" id="addExpenseTop">＋ Expense</button>
+        </div>
+      </header>
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="view active" id="view-dashboard">
+        <div class="stats">
+          <div class="stat-card c1">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value" id="stBalance" data-val="0">₹0</div>
+            <div class="stat-sub" id="stBalanceSub">All time</div>
+          </div>
+          <div class="stat-card c2">
+            <div class="stat-icon">📥</div>
+            <div class="stat-label">Income (this month)</div>
+            <div class="stat-value" id="stIncome" data-val="0">₹0</div>
+            <div class="stat-sub" id="stIncomeSub"></div>
+          </div>
+          <div class="stat-card c3">
+            <div class="stat-icon">📤</div>
+            <div class="stat-label">Expenses (this month)</div>
+            <div class="stat-value" id="stExpense" data-val="0">₹0</div>
+            <div class="stat-sub" id="stExpenseSub"></div>
+          </div>
+          <div class="stat-card c4">
+            <div class="stat-icon">🌱</div>
+            <div class="stat-label">Savings Rate</div>
+            <div class="stat-value" id="stSavings" data-val="0">0%</div>
+            <div class="stat-sub" id="stSavingsSub"></div>
+          </div>
+        </div>
+
+        <div class="ai-banner" id="aiBanner">
+          <div class="ai-pulse">✨</div>
+          <div>
+            <b>AI Quick Insight</b>
+            <p id="aiBannerText">Analyzing your spending…</p>
+          </div>
+          <button class="btn ghost sm" data-goto="insights">See all insights →</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Income vs Expenses</h3><span class="chip">Last 6 months</span></div>
+            <canvas id="barChart" class="chart"></canvas>
+            <div class="legend"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--red)"></i>Expenses</span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Spending by Category</h3><span class="chip">This month</span></div>
+            <div class="donut-wrap">
+              <canvas id="donutChart" class="chart donut"></canvas>
+              <div class="donut-center"><small>Spent</small><b id="donutTotal">₹0</b></div>
+            </div>
+            <div class="cat-legend" id="catLegend"></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Recent Transactions</h3><button class="link" data-goto="transactions">View all</button></div>
+            <div id="recentList" class="tx-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Budget Status</h3><button class="link" data-goto="budgets">Manage</button></div>
+            <div id="miniBudgets"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TRANSACTIONS ===== -->
+      <section class="view" id="view-transactions">
+        <div class="card">
+          <div class="card-head wrap">
+            <h3>All Transactions</h3>
+            <div class="filters">
+              <input type="search" id="fSearch" placeholder="🔍 Search…" />
+              <select id="fType"><option value="all">All types</option><option value="income">Income</option><option value="expense">Expense</option></select>
+              <select id="fCat"><option value="all">All categories</option></select>
+              <select id="fMonth"><option value="all">All time</option></select>
+              <button class="btn ghost sm" id="exportBtn">⬇ Export CSV</button>
+              <button class="btn primary sm" id="addTxBtn">＋ Add</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th class="r">Amount</th><th></th></tr></thead>
+              <tbody id="txBody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="txEmpty" hidden>No transactions found.</div>
+          <div class="tx-summary" id="txSummary"></div>
+        </div>
+      </section>
+
+      <!-- ===== BUDGETS ===== -->
+      <section class="view" id="view-budgets">
+        <div class="card">
+          <div class="card-head">
+            <h3>Monthly Budgets</h3>
+            <button class="btn primary sm" id="addBudgetBtn">＋ Set Budget</button>
+          </div>
+          <p class="muted">Set a limit per category. FinMind AI warns you before you overspend.</p>
+          <div id="budgetList" class="budget-grid"></div>
+        </div>
+      </section>
+
+      <!-- ===== GOALS ===== -->
+      <section class="view" id="view-goals">
+        <div class="card">
+          <div class="card-head">
+            <h3>Savings Goals</h3>
+            <button class="btn primary sm" id="addGoalBtn">＋ New Goal</button>
+          </div>
+          <div id="goalList" class="goal-grid"></div>
+        </div>
+      </section>
+
+      <!-- ===== INSIGHTS ===== -->
+      <section class="view" id="view-insights">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Daily Spending Trend</h3><span class="chip">Last 30 days</span></div>
+            <canvas id="lineChart" class="chart"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Month-End Forecast</h3><span class="chip">AI prediction</span></div>
+            <div class="forecast" id="forecastBox"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>✨ Personalized AI Insights</h3><button class="btn ghost sm" id="refreshInsights">↻ Re-analyze</button></div>
+          <div id="insightList" class="insight-grid"></div>
+        </div>
+      </section>
+
+      <!-- ===== ASSISTANT ===== -->
+      <section class="view" id="view-assistant">
+        <div class="card chat-card">
+          <div class="card-head"><h3>🤖 FinMind Assistant</h3><span class="chip">Ask anything about your money</span></div>
+          <div class="chat" id="chatBox"></div>
+          <div class="suggestions" id="chatSuggest">
+            <button>How much did I spend on food?</button>
+            <button>What's my balance?</button>
+            <button>Forecast this month</button>
+            <button>Give me a saving tip</button>
+            <button>add 250 food lunch</button>
+          </div>
+          <form class="chat-form" id="chatForm">
+            <input id="chatInput" autocomplete="off" placeholder='Try: "add 500 transport cab" or "biggest expense"' />
+            <button class="btn primary" type="submit">Send ➤</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section class="view" id="view-settings">
+        <div class="card">
+          <div class="card-head"><h3>Settings</h3></div>
+          <div class="settings">
+            <label>Your name
+              <input id="setName" placeholder="Enter your name" />
+            </label>
+            <label>Opening balance (₹)
+              <input id="setOpening" type="number" min="0" placeholder="0" />
+            </label>
+            <label>Monthly savings target (%)
+              <input id="setTarget" type="number" min="0" max="90" placeholder="20" />
+            </label>
+            <div class="row-btns">
+              <button class="btn primary" id="saveSettings">Save settings</button>
+              <button class="btn ghost" id="loadDemo">Load sample data</button>
+              <button class="btn danger" id="resetAll">Clear all financial data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============ LOCAL DEMO LOGIN ============ -->
+  <div class="modal auth-modal" id="authModal" hidden>
+    <form class="modal-box auth-box" id="authForm" autocomplete="on">
+      <div class="auth-brand"><span class="brand-logo">◈</span><span><b>FinMind</b> <span class="grad">AI</span></span></div>
+      <div>
+        <h2 id="authTitle">Welcome back</h2>
+        <p class="auth-subtitle" id="authSubtitle">Sign in to open your personal finance dashboard.</p>
+      </div>
+      <label id="authNameWrap" hidden>Your name
+        <input id="authName" type="text" maxlength="40" placeholder="Enter your name" autocomplete="name" />
+      </label>
+      <label>Email address
+        <input id="authEmail" type="email" required maxlength="120" placeholder="name@example.com" autocomplete="username" />
+      </label>
+      <label>Password
+        <input id="authPassword" type="password" required minlength="6" placeholder="At least 6 characters" autocomplete="current-password" />
+      </label>
+      <p class="auth-error" id="authError" role="alert" aria-live="polite"></p>
+      <p class="auth-note">Demo authentication: your account and finance data are stored only in this browser. This is not server-backed security.</p>
+      <button class="btn primary full" id="authSubmit" type="submit">Login</button>
+      <button class="auth-switch" id="authToggle" type="button">New to FinMind? Create an account</button>
+    </form>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+  <div class="modal" id="txModal" hidden>
+    <form class="modal-box" id="txForm">
+      <div class="modal-head"><h3 id="txModalTitle">Add Transaction</h3><button type="button" class="x" data-close>✕</button></div>
+      <div class="seg" id="typeSeg">
+        <button type="button" data-type="expense" class="active">Expense</button>
+        <button type="button" data-type="income">Income</button>
+      </div>
+      <label>Amount (₹)<input type="number" id="txAmount" min="1" step="0.01" required placeholder="0.00" /></label>
+      <label>Description<input type="text" id="txDesc" required maxlength="60" placeholder="e.g. Lunch at cafe" /></label>
+      <div class="two">
+        <label>Category<select id="txCat"></select></label>
+        <label>Date<input type="date" id="txDate" required /></label>
+      </div>
+      <label class="check"><input type="checkbox" id="txRecurring" /> Recurring (monthly)</label>
+      <button class="btn primary full" type="submit">Save</button>
+    </form>
+  </div>
+
+  <div class="modal" id="budgetModal" hidden>
+    <form class="modal-box" id="budgetForm">
+      <div class="modal-head"><h3>Set Budget</h3><button type="button" class="x" data-close>✕</button></div>
+      <label>Category<select id="bCat"></select></label>
+      <label>Monthly limit (₹)<input type="number" id="bLimit" min="1" required /></label>
+      <button class="btn primary full" type="submit">Save budget</button>
+    </form>
+  </div>
+
+  <div class="modal" id="goalModal" hidden>
+    <form class="modal-box" id="goalForm">
+      <div class="modal-head"><h3>New Savings Goal</h3><button type="button" class="x" data-close>✕</button></div>
+      <label>Goal name<input type="text" id="gName" required maxlength="40" placeholder="e.g. New laptop" /></label>
+      <div class="two">
+        <label>Target (₹)<input type="number" id="gTarget" min="1" required /></label>
+        <label>Already saved (₹)<input type="number" id="gSaved" min="0" value="0" /></label>
+      </div>
+      <label>Target date<input type="date" id="gDate" required /></label>
+      <label>Emoji<input type="text" id="gEmoji" maxlength="2" value="🎯" /></label>
+      <button class="btn primary full" type="submit">Create goal</button>
+    </form>
+  </div>
+
+  <div class="modal" id="fundModal" hidden>
+    <form class="modal-box small" id="fundForm">
+      <div class="modal-head"><h3 id="fundTitle">Add to goal</h3><button type="button" class="x" data-close>✕</button></div>
+      <label>Amount (₹)<input type="number" id="fundAmount" min="1" required /></label>
+      <button class="btn primary full" type="submit">Add funds</button>
+    </form>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
